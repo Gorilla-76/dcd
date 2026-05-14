@@ -1,8 +1,15 @@
 ---
-import BaseHead from '../components/BaseHead.astro';
-import Header from '../components/Header.astro';
-import Footer from '../components/Footer.astro';
-import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
+import BaseHead from "../components/BaseHead.astro";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+import FormattedDate from "../components/FormattedDate.astro";
+import { SITE_TITLE, SITE_DESCRIPTION, SITE_TAGLINE } from "../consts";
+import { getCollection } from "astro:content";
+
+const issues = (await getCollection("newsletter")).sort(
+	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
+);
+const latest = issues.slice(0, 3);
 ---
 
 <!doctype html>
@@ -13,38 +20,261 @@ import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
 	<body>
 		<Header />
 		<main>
-			<h1>🧑‍🚀 Hello, Astronaut!</h1>
-			<p>
-				Welcome to the official <a href="https://astro.build/">Astro</a> blog starter template. This
-				template serves as a lightweight, minimally-styled starting point for anyone looking to build
-				a personal website, blog, or portfolio with Astro.
-			</p>
-			<p>
-				This template comes with a few integrations already configured in your
-				<code>astro.config.mjs</code> file. You can customize your setup with
-				<a href="https://astro.build/integrations">Astro Integrations</a> to add tools like Tailwind,
-				React, or Vue to your project.
-			</p>
-			<p>Here are a few ideas on how to get started with the template:</p>
-			<ul>
-				<li>Edit this page in <code>src/pages/index.astro</code></li>
-				<li>Edit the site header items in <code>src/components/Header.astro</code></li>
-				<li>Add your name to the footer in <code>src/components/Footer.astro</code></li>
-				<li>Check out the included blog posts in <code>src/content/blog/</code></li>
-				<li>Customize the blog post page layout in <code>src/layouts/BlogPost.astro</code></li>
-			</ul>
-			<p>
-				Have fun! If you get stuck, remember to <a href="https://docs.astro.build/"
-					>read the docs
-				</a> or <a href="https://astro.build/chat">join us on Discord</a> to ask questions.
-			</p>
-			<p>
-				Looking for a blog template with a bit more personality? Check out <a
-					href="https://github.com/Charca/astro-blog-template"
-					>astro-blog-template
-				</a> by <a href="https://twitter.com/Charca">Maxi Ferreira</a>.
-			</p>
+			<section class="hero">
+				<p class="eyebrow">Internal dispatch · est. 2026</p>
+				<h1>
+					The team <br />
+					<span class="accent">behind the screens.</span>
+				</h1>
+				<p class="lede">
+					We are the <strong>Digital Creative Department</strong>. Web, brand, motion,
+					product design — and the unglamorous infrastructure that keeps them all
+					rendering. Every other Thursday we send a short newsletter to the rest of
+					the company about what we shipped, what we broke, and what we learned.
+				</p>
+				<p class="tagline mono">// {SITE_TAGLINE}</p>
+				<div class="cta">
+					<a class="btn primary" href="/archive">Read the archive →</a>
+					<a class="btn ghost" href="/rss.xml">Subscribe via RSS</a>
+				</div>
+			</section>
+
+			<section class="what">
+				<h2>What we do</h2>
+				<div class="grid">
+					<div class="card">
+						<span class="num mono">01</span>
+						<h3>Web &amp; product</h3>
+						<p>
+							Marketing site, internal tools, the docs. If it has a URL on our
+							domain, odds are it passed through here.
+						</p>
+					</div>
+					<div class="card">
+						<span class="num mono">02</span>
+						<h3>Brand &amp; identity</h3>
+						<p>
+							Visual system, illustration, the long boring document that explains
+							why our buttons look the way they do.
+						</p>
+					</div>
+					<div class="card">
+						<span class="num mono">03</span>
+						<h3>Motion &amp; interaction</h3>
+						<p>
+							Micro-animations, loading states, the kind of polish you only notice
+							when it's missing.
+						</p>
+					</div>
+					<div class="card">
+						<span class="num mono">04</span>
+						<h3>Plumbing</h3>
+						<p>
+							Design tokens, component libraries, build pipelines. The boring
+							scaffolding that makes the fun stuff possible.
+						</p>
+					</div>
+				</div>
+			</section>
+
+			<section class="latest">
+				<div class="latest-head">
+					<h2>Latest dispatches</h2>
+					<a class="all" href="/archive">All issues →</a>
+				</div>
+				<ul class="issues">
+					{
+						latest.map((issue) => (
+							<li>
+								<a href={`/archive/${issue.id}/`}>
+									<div class="meta">
+										<span class="issue-no mono">
+											#{String(issue.data.issue).padStart(3, "0")}
+										</span>
+										<span class="date">
+											<FormattedDate date={issue.data.pubDate} />
+										</span>
+									</div>
+									<h3>{issue.data.title}</h3>
+									<p>{issue.data.description}</p>
+								</a>
+							</li>
+						))
+					}
+				</ul>
+			</section>
 		</main>
 		<Footer />
+		<style>
+			.hero {
+				padding: 4rem 0 5rem;
+				border-bottom: 1px solid var(--border);
+			}
+			.hero h1 {
+				margin: 0 0 0.6em;
+			}
+			.hero h1 .accent {
+				color: var(--accent);
+			}
+			.lede {
+				font-size: 1.15rem;
+				color: var(--text-dim);
+				max-width: 38em;
+				margin-bottom: 1.4em;
+			}
+			.lede strong {
+				color: var(--text);
+			}
+			.tagline {
+				color: var(--text-muted);
+				font-size: 0.9rem;
+				margin-bottom: 2em;
+			}
+			.cta {
+				display: flex;
+				gap: 0.8rem;
+				flex-wrap: wrap;
+			}
+			.btn {
+				display: inline-block;
+				padding: 0.85rem 1.3rem;
+				border-radius: 6px;
+				font-weight: 700;
+				font-size: 0.95rem;
+				border: 1px solid transparent;
+				transition:
+					background 0.15s,
+					color 0.15s,
+					border-color 0.15s;
+			}
+			.btn.primary {
+				background: var(--accent);
+				color: #0d0e12;
+			}
+			.btn.primary:hover {
+				background: var(--accent-dark);
+				border-color: transparent;
+			}
+			.btn.ghost {
+				color: var(--text);
+				border-color: var(--border-strong);
+			}
+			.btn.ghost:hover {
+				border-color: var(--accent);
+				color: var(--accent);
+			}
+
+			.what {
+				padding: 4rem 0;
+				border-bottom: 1px solid var(--border);
+			}
+			.grid {
+				display: grid;
+				grid-template-columns: repeat(2, 1fr);
+				gap: 1rem;
+				margin-top: 1.5rem;
+			}
+			.card {
+				background: var(--bg-card);
+				border: 1px solid var(--border);
+				border-radius: 10px;
+				padding: 1.4rem 1.5rem 1.6rem;
+			}
+			.card .num {
+				display: block;
+				font-size: 0.78rem;
+				color: var(--accent);
+				margin-bottom: 0.6em;
+				letter-spacing: 0.1em;
+			}
+			.card h3 {
+				font-size: 1.1rem;
+				margin: 0 0 0.4em;
+			}
+			.card p {
+				color: var(--text-dim);
+				margin: 0;
+				font-size: 0.95rem;
+			}
+
+			.latest {
+				padding: 4rem 0 2rem;
+			}
+			.latest-head {
+				display: flex;
+				align-items: baseline;
+				justify-content: space-between;
+				gap: 1rem;
+				margin-bottom: 1.5rem;
+			}
+			.latest-head h2 {
+				margin: 0;
+			}
+			.all {
+				font-size: 0.95rem;
+				border: none;
+			}
+			.all:hover {
+				border: none;
+				color: var(--accent-dark);
+			}
+			.issues {
+				list-style: none;
+				padding: 0;
+				margin: 0;
+				display: flex;
+				flex-direction: column;
+				gap: 0;
+			}
+			.issues li {
+				margin: 0;
+				border-top: 1px solid var(--border);
+			}
+			.issues li:last-child {
+				border-bottom: 1px solid var(--border);
+			}
+			.issues a {
+				display: block;
+				padding: 1.4rem 0;
+				color: var(--text);
+				border: none;
+			}
+			.issues a:hover {
+				border: none;
+			}
+			.issues a:hover h3 {
+				color: var(--accent);
+			}
+			.issues h3 {
+				margin: 0.3em 0 0.3em;
+				font-size: 1.35rem;
+				transition: color 0.15s;
+			}
+			.issues p {
+				margin: 0;
+				color: var(--text-dim);
+				font-size: 0.98rem;
+			}
+			.meta {
+				display: flex;
+				gap: 1rem;
+				align-items: center;
+				font-size: 0.8rem;
+				color: var(--text-muted);
+			}
+			.issue-no {
+				color: var(--accent);
+				letter-spacing: 0.05em;
+			}
+
+			@media (max-width: 640px) {
+				.grid {
+					grid-template-columns: 1fr;
+				}
+				.hero {
+					padding: 2.5rem 0 3.5rem;
+				}
+			}
+		</style>
 	</body>
 </html>

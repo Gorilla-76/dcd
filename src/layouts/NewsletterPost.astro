@@ -1,0 +1,133 @@
+---
+import type { CollectionEntry } from "astro:content";
+import BaseHead from "../components/BaseHead.astro";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+import FormattedDate from "../components/FormattedDate.astro";
+
+type Props = CollectionEntry<"newsletter">["data"];
+
+const { issue, title, description, pubDate, updatedDate } = Astro.props;
+---
+
+<html lang="en">
+	<head>
+		<BaseHead title={title} description={description} />
+	</head>
+	<body>
+		<Header />
+		<main class="prose">
+			<nav class="back">
+				<a href="/archive">← Archive</a>
+			</nav>
+			<header class="post-head">
+				<div class="meta">
+					<span class="issue-no mono">
+						Issue #{String(issue).padStart(3, "0")}
+					</span>
+					<span class="dot">·</span>
+					<span class="date mono">
+						<FormattedDate date={pubDate} />
+					</span>
+					{
+						updatedDate && (
+							<>
+								<span class="dot">·</span>
+								<span class="updated mono">
+									updated <FormattedDate date={updatedDate} />
+								</span>
+							</>
+						)
+					}
+				</div>
+				<h1>{title}</h1>
+				<p class="description">{description}</p>
+			</header>
+			<article>
+				<slot />
+			</article>
+			<nav class="post-foot">
+				<a href="/archive">← Back to archive</a>
+				<a href="/rss.xml">Subscribe via RSS →</a>
+			</nav>
+		</main>
+		<Footer />
+		<style>
+			.back {
+				margin: 1rem 0 2rem;
+				font-size: 0.9rem;
+			}
+			.back a {
+				color: var(--text-muted);
+				border: none;
+			}
+			.back a:hover {
+				color: var(--accent);
+				border: none;
+			}
+			.post-head {
+				margin-bottom: 2.5rem;
+				padding-bottom: 1.5rem;
+				border-bottom: 1px solid var(--border);
+			}
+			.meta {
+				display: flex;
+				flex-wrap: wrap;
+				gap: 0.5rem;
+				align-items: center;
+				font-size: 0.85rem;
+				color: var(--text-muted);
+				margin-bottom: 1rem;
+			}
+			.issue-no {
+				color: var(--accent);
+				letter-spacing: 0.05em;
+			}
+			.dot {
+				opacity: 0.5;
+			}
+			.post-head h1 {
+				font-size: clamp(2rem, 4.5vw, 3rem);
+				margin: 0 0 0.4em;
+			}
+			.description {
+				font-size: 1.1rem;
+				color: var(--text-dim);
+				margin: 0;
+			}
+			article {
+				font-size: 1.05rem;
+				line-height: 1.75;
+			}
+			article :global(h2) {
+				margin-top: 2em;
+				font-size: 1.4rem;
+			}
+			article :global(h3) {
+				margin-top: 1.8em;
+				font-size: 1.15rem;
+			}
+			article :global(ul),
+			article :global(ol) {
+				margin: 0 0 1.2em;
+			}
+			.post-foot {
+				display: flex;
+				justify-content: space-between;
+				gap: 1rem;
+				margin-top: 4rem;
+				padding-top: 1.5rem;
+				border-top: 1px solid var(--border);
+				font-size: 0.95rem;
+			}
+			.post-foot a {
+				color: var(--text-dim);
+				border: none;
+			}
+			.post-foot a:hover {
+				color: var(--accent);
+				border: none;
+			}
+		</style>
+	</body>
+</html>

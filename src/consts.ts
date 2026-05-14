@@ -1,5 +1,7 @@
-// Place any global data in this file.
-// You can import this data from anywhere in your site by using the `import` keyword.
+// Site-wide constants.
 
-export const SITE_TITLE = "Astro Blog";
-export const SITE_DESCRIPTION = "Welcome to my website!";
+export const SITE_TITLE = "Digital Creative Department";
+export const SITE_SHORT = "DCD";
+export const SITE_DESCRIPTION =
+	"The Digital Creative Department — the team behind the screens. Newsletters, notes, and signals from inside the company.";
+export const SITE_TAGLINE = "Signals from inside the screens.";

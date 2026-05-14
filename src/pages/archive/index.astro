@@ -1,0 +1,151 @@
+---
+import BaseHead from "../../components/BaseHead.astro";
+import Header from "../../components/Header.astro";
+import Footer from "../../components/Footer.astro";
+import FormattedDate from "../../components/FormattedDate.astro";
+import { SITE_TITLE, SITE_DESCRIPTION } from "../../consts";
+import { getCollection } from "astro:content";
+
+const issues = (await getCollection("newsletter")).sort(
+	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
+);
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<BaseHead
+			title={`Archive — ${SITE_TITLE}`}
+			description={SITE_DESCRIPTION}
+		/>
+	</head>
+	<body>
+		<Header />
+		<main>
+			<header class="page-head">
+				<p class="eyebrow">DCD Dispatch · Archive</p>
+				<h1>Every issue we've ever sent.</h1>
+				<p class="lede">
+					A short, fortnightly newsletter from the Digital Creative Department.
+					What we shipped, what we broke, what we found. <a href="/rss.xml"
+						>Subscribe via RSS</a
+					>.
+				</p>
+				<p class="count mono">
+					{issues.length} {issues.length === 1 ? "issue" : "issues"} ·
+					updated {new Date(issues[0].data.pubDate).toLocaleDateString("en-US", { month: "long", year: "numeric" })}
+				</p>
+			</header>
+
+			<ul class="issues">
+				{
+					issues.map((issue) => (
+						<li>
+							<a href={`/archive/${issue.id}/`}>
+								<div class="row">
+									<span class="num mono">
+										#{String(issue.data.issue).padStart(3, "0")}
+									</span>
+									<div class="body">
+										<h2>{issue.data.title}</h2>
+										<p class="desc">{issue.data.description}</p>
+									</div>
+									<span class="date mono">
+										<FormattedDate date={issue.data.pubDate} />
+									</span>
+								</div>
+							</a>
+						</li>
+					))
+				}
+			</ul>
+		</main>
+		<Footer />
+		<style>
+			.page-head {
+				padding: 3rem 0 2.5rem;
+				border-bottom: 1px solid var(--border);
+				margin-bottom: 2rem;
+			}
+			.page-head h1 {
+				font-size: clamp(2rem, 4.5vw, 3.2rem);
+				margin: 0 0 0.5em;
+			}
+			.lede {
+				color: var(--text-dim);
+				max-width: 36em;
+				margin: 0 0 1.2em;
+			}
+			.count {
+				color: var(--text-muted);
+				font-size: 0.85rem;
+				margin: 0;
+			}
+
+			.issues {
+				list-style: none;
+				padding: 0;
+				margin: 0;
+			}
+			.issues li {
+				border-top: 1px solid var(--border);
+			}
+			.issues li:last-child {
+				border-bottom: 1px solid var(--border);
+			}
+			.issues a {
+				display: block;
+				padding: 1.5rem 0.5rem;
+				color: var(--text);
+				border: none;
+				transition: background 0.15s;
+			}
+			.issues a:hover {
+				background: var(--bg-card);
+				border: none;
+			}
+			.issues a:hover h2 {
+				color: var(--accent);
+			}
+			.row {
+				display: grid;
+				grid-template-columns: 80px 1fr auto;
+				gap: 1.5rem;
+				align-items: baseline;
+			}
+			.num {
+				color: var(--accent);
+				font-size: 0.95rem;
+				letter-spacing: 0.05em;
+			}
+			.body {
+				min-width: 0;
+			}
+			.body h2 {
+				margin: 0 0 0.25em;
+				font-size: 1.35rem;
+				letter-spacing: -0.015em;
+				transition: color 0.15s;
+			}
+			.desc {
+				margin: 0;
+				color: var(--text-dim);
+				font-size: 0.95rem;
+			}
+			.date {
+				color: var(--text-muted);
+				font-size: 0.85rem;
+				white-space: nowrap;
+			}
+			@media (max-width: 640px) {
+				.row {
+					grid-template-columns: 1fr;
+					gap: 0.35rem;
+				}
+				.date {
+					order: 3;
+				}
+			}
+		</style>
+	</body>
+</html>
